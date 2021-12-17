@@ -1,9 +1,9 @@
-def build_prefix(p):
-    m = len(p)
+def build_prefix(text):
+    m = len(text)
     prefix = [0] * m
     i, j = 1, 0
     while i < m:
-        if p[i] == p[j]:
+        if text[i] == text[j]:
             j += 1
             prefix[i] = j
             i += 1
@@ -16,27 +16,30 @@ def build_prefix(p):
     return prefix
 
 
-def kmp_count(text, pattern):
+def search(text, pattern, count):
     prefix = build_prefix(pattern)
     i = j = 0
-    count = 0
     while i < len(text):
         if text[i] == pattern[j]:
             i, j = i + 1, j + 1
         if j == len(pattern):
-            count += 1
+            count -= 1
+            if count == 0:
+                return True
             j = prefix[j - 1]
         elif i < len(text) and text[i] != pattern[j]:
             if j != 0:
                 j = prefix[j - 1]
             else:
                 i += 1
-    return count
+    return True if count == 0 else False
 
 
 if __name__ == "__main__":
-    testcase = int(input())
-    for tc in range(1, testcase + 1):
-        s, t = input().replace(' ', ''), input().replace(' ', '')
-        ans = kmp_count(s, t)
-        print("Case %s: %s" % (tc, ans))
+    text, pattern, count = input().replace(' ', ''), input().replace(' ', ''), int(input())
+    while pattern:
+        if search(text, pattern, count):
+            print(pattern)
+            exit()
+        pattern = pattern[:-1]
+    print("IMPOSSIBLE")
